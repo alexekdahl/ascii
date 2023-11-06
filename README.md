@@ -34,20 +34,32 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+
 	"github.com/alexekdahl/ascii"
 )
 
 func main() {
-	resp, _ := http.Get("https://avatars.githubusercontent.com/u/1024025?v=4")
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-
-	ascii, err := ascii.ToASCII(body, 50, 25)
+	resp, err := http.Get("https://avatars.githubusercontent.com/u/1024025?v=4")
 	if err != nil {
 		panic(err)
 	}
-	println(ascii)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+
+	customASCII, err := ascii.ToASCII(body, ascii.WithChar('█'))
+	if err != nil {
+		panic(err)
+	}
+
+	defaultASCII, err := ascii.ToASCII(body)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(customASCII)
+	fmt.Println(defaultASCII)
 }
 ```
 
